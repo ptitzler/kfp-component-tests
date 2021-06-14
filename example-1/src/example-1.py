@@ -26,6 +26,9 @@ parser.add_argument('--param1',
                     help='The number of lines to read from the input and write to the output.')
 args = parser.parse_args()
 
+print('Input arguments:')
+print(args)
+
 # Creating the directory where the output file is created (the directory
 # may or may not exist).
 Path(args.output1_path).parent.mkdir(parents=True, exist_ok=True)

@@ -1,7 +1,7 @@
 .PHONY: container-image publish-container-image lint
 
 # Customize the variables as desired/required
-CONTAINER_IMAGE_NAME=kfp-ex-component-1
+CONTAINER_IMAGE_NAME=kfp-ex-component-1:latest
 DH_ORH=
 QUAY_ORG=ptitzler
 

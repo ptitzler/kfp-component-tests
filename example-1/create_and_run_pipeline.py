@@ -3,10 +3,10 @@ import kfp.components as comp
 import requests
 import sys
 
-url = 'https://raw.githubusercontent.com/ptitzler/kfp-component-tests/main/example1/component.yaml'
-create_step_get_lines = comp.load_component_from_url(url)
+# url = 'https://raw.githubusercontent.com/ptitzler/kfp-component-tests/main/example-1/component.yaml'
+# create_step_get_lines = comp.load_component_from_url(url)
 
-# create_step_get_lines = comp.load_component_from_file('component.yaml')
+create_step_get_lines = comp.load_component_from_file('component.yaml')
 
 # create_step_get_lines is a "factory function" that accepts the arguments
 
@@ -78,6 +78,7 @@ if __name__ == "__main__":
         id = sys.argv[2]
         password = sys.argv[3]
     elif len(sys.argv) == 5:
+        namespace = sys.argv[2]
         id = sys.argv[3]
         password = sys.argv[4]
 
