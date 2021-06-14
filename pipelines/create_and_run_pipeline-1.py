@@ -1,22 +1,21 @@
+from datetime import datetime
 import kfp
 import kfp.components as comp
 import requests
 import sys
 
-# url = 'https://raw.githubusercontent.com/ptitzler/kfp-component-tests/main/example-1/component.yaml'
-# create_step_get_lines = comp.load_component_from_url(url)
-
-create_step_get_lines = comp.load_component_from_file('component.yaml')
-
-# create_step_get_lines is a "factory function" that accepts the arguments
+create_step_get_lines = comp.load_component_from_file('../example-1/component.yaml')
+create_step_count_lines = comp.load_component_from_file('../example-2/component.yaml')
 
 
 # Define your pipeline
-def my_pipeline():
-    create_step_get_lines(
-        # Input name "Input 1" is converted to pythonic parameter name "input_1"
+def a_two_step_pipeline():
+    get_lines = create_step_get_lines(
         input_1='one\ntwo\nthree\nfour\nfive\nsix\nseven\neight\nnine\nten',
         parameter_1='5',
+    )
+    create_step_count_lines(
+        input_1=get_lines.outputs['output_1']
     )
 
 
@@ -61,7 +60,7 @@ def get_user_auth_session_cookie(url, username=None, password=None) -> dict:
 if __name__ == "__main__":
 
     if len(sys.argv) < 2:
-        print(f'Invocation {sys.argv[0]} <KFP-AP-URL> [<namespace>] [<kf-uid> <kf-password>]')
+        print(f'Invocation {sys.argv[0]} <KFP-API-URL> [<namespace>] [<kf-uid> <kf-password>]')
         sys.exit(1)
 
     print('Trying to authenticate with Kubeflow server ...')
@@ -97,9 +96,46 @@ if __name__ == "__main__":
     client = kfp.Client(host=sys.argv[1],
                         cookies=auth_cookie)
 
-    print('Creating run from pipeline')
-    # Compile, upload, and submit this pipeline for execution.
-    run = client.create_run_from_pipeline_func(my_pipeline,
-                                               namespace=namespace,
-                                               arguments={})
-    print(run)
+    print('Compiling pipeline...')
+
+    pipeline_name = 'a_two_step_pipeline'
+    pipeline_archive = f'{pipeline_name}.tgz'
+    timestamp = datetime.now().strftime("%m%d%H%M%S")
+
+    # Compile
+    kfp.compiler.Compiler().compile(a_two_step_pipeline,
+                                    pipeline_archive)
+
+    pipeline_id = client.get_pipeline_id(pipeline_name)
+    if pipeline_id is None:
+        # Upload new pipeline. The call returns a unique pipeline id.
+        print(f'Uploading pipeline {pipeline_name} ...')
+        kfp_pipeline = \
+            client.upload_pipeline(pipeline_archive,
+                                   pipeline_name,
+                                   f'Created using {sys.argv[0]}')
+        pipeline_id = kfp_pipeline.id
+        version_id = None
+    else:
+        # Append timestamp to generate unique version name
+        pipeline_version_name = f'{pipeline_name}-{timestamp}'
+        # Upload a pipeline version. The call returns a unique version id.
+        print(f'Uploading pipeline version {pipeline_version_name} ...')
+        kfp_pipeline = \
+            client.upload_pipeline_version(pipeline_archive,
+                                           pipeline_version_name,
+                                           pipeline_id=pipeline_id)
+        version_id = kfp_pipeline.id
+
+    experiment_name = f'{pipeline_name}-experiment'
+    print(f'Creating expriment {experiment_name} in namespace {namespace} ...')
+    experiment = client.create_experiment(experiment_name,
+                                          namespace=namespace)
+
+    run_name = f'{pipeline_name}-{timestamp}'
+    print(f'Starting pipeline run {run_name} ...')
+    run = client.run_pipeline(experiment_id=experiment.id,
+                              job_name=run_name,
+                              pipeline_id=pipeline_id,
+                              version_id=version_id)
+    print(f'Pipeline run id: {run.id}')
