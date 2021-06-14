@@ -17,7 +17,7 @@ implementation:
     command: [
       python3, 
       # Path of the program inside the container
-      /pipelines/component/src/program.py,
+      /pipelines/component/src/example-1.py,
       --input1-path,
       {inputPath: Input 1},
       --param1, 
