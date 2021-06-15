@@ -3,20 +3,19 @@ import kfp.components as comp
 import requests
 import sys
 
-# url = 'https://raw.githubusercontent.com/ptitzler/kfp-component-tests/main/example-1/component.yaml'
+# url = 'https://raw.githubusercontent.com/ptitzler/kfp-component-tests/main/example-0/component.yaml'
 # create_step_get_lines = comp.load_component_from_url(url)
 
-create_step_get_lines = comp.load_component_from_file('component.yaml')
+create_step_download_file = comp.load_component_from_file('component.yaml')
 
 # create_step_get_lines is a "factory function" that accepts the arguments
 
 
 # Define your pipeline
 def my_pipeline():
-    create_step_get_lines(
-        # Input name "Input 1" is converted to pythonic parameter name "input_1"
-        input_1='one\ntwo\nthree\nfour\nfive\nsix\nseven\neight\nnine\nten',
-        parameter_1=2,
+    create_step_download_file(
+        # Input name "URL" is converted to pythonic parameter name "input_1"
+        url='https://raw.githubusercontent.com/ptitzler/kfp-component-tests/main/LICENSE'
     )
 
 
