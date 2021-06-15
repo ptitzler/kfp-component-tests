@@ -1,17 +1,21 @@
+from datetime import datetime
 import kfp
 import kfp.components as comp
+import kfp.dsl as dsl
 import requests
 import sys
 
 # url = 'https://raw.githubusercontent.com/ptitzler/kfp-component-tests/main/example-0/component.yaml'
-# create_step_get_lines = comp.load_component_from_url(url)
+# create_step_download_file = comp.load_component_from_url(url)
 
 create_step_download_file = comp.load_component_from_file('component.yaml')
 
-# create_step_get_lines is a "factory function" that accepts the arguments
 
-
-# Define your pipeline
+# Define pipeline
+@dsl.pipeline(
+    name='File download pipeline',
+    description='Download file using HTTP/S GET request from public location'
+)
 def my_pipeline():
     create_step_download_file(
         # Input name "URL" is converted to pythonic parameter name "input_1"
@@ -96,9 +100,11 @@ if __name__ == "__main__":
     client = kfp.Client(host=sys.argv[1],
                         cookies=auth_cookie)
 
-    print('Creating run from pipeline')
+    run_name = f'component-0-pipeline-run-{datetime.now().strftime("%m%d%H%M%S")}'
+    print(f'Creating run {run_name} from pipeline...')
     # Compile, upload, and submit this pipeline for execution.
     run = client.create_run_from_pipeline_func(my_pipeline,
+                                               run_name=run_name,
                                                namespace=namespace,
                                                arguments={})
     print(run)

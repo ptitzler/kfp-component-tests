@@ -1,15 +1,21 @@
+from datetime import datetime
 import kfp
 import kfp.components as comp
+import kfp.dsl as dsl
 import requests
 import sys
 
-# url = 'https://raw.githubusercontent.com/ptitzler/kfp-component-tests/main/example-1/component.yaml'
-# create_step_get_lines = comp.load_component_from_url(url)
+# url = 'https://raw.githubusercontent.com/ptitzler/kfp-component-tests/main/example-2/component.yaml'
+# create_step_count_lines = comp.load_component_from_url(url)
 
 create_step_count_lines = comp.load_component_from_file('component.yaml')
 
 
-# Define your pipeline
+# Define pipeline
+@dsl.pipeline(
+    name='Count lines in input',
+    description='Count lines in input'
+)
 def my_pipeline():
     create_step_count_lines(
         # Input name "Input 1" is converted to pythonic parameter name "input_1"
@@ -95,8 +101,11 @@ if __name__ == "__main__":
                         cookies=auth_cookie)
 
     print('Creating run from pipeline')
+    run_name = f'component-2-pipeline-run-{datetime.now().strftime("%m%d%H%M%S")}'
+    print(f'Creating run {run_name} from pipeline...')
     # Compile, upload, and submit this pipeline for execution.
     run = client.create_run_from_pipeline_func(my_pipeline,
+                                               run_name=run_name,
                                                namespace=namespace,
                                                arguments={})
     print(run)
