@@ -1,18 +1,27 @@
 from datetime import datetime
 import kfp
 import kfp.components as comp
+import kfp.dsl as dsl
 import requests
 import sys
 
+create_step_load_file = comp.load_component_from_file('../example-0/component.yaml')
 create_step_get_lines = comp.load_component_from_file('../example-1/component.yaml')
 create_step_count_lines = comp.load_component_from_file('../example-2/component.yaml')
 
 
-# Define your pipeline
-def a_two_step_pipeline():
+# Define pipeline
+@dsl.pipeline(
+    name='Component examples example pipeline',
+    description='Runs example-0, example-1, and example-2'
+)
+def a_three_step_pipeline():
+    download_file = create_step_load_file(
+        url='https://raw.githubusercontent.com/ptitzler/kfp-component-tests/main/LICENSE'
+    )
     get_lines = create_step_get_lines(
-        input_1='one\ntwo\nthree\nfour\nfive\nsix\nseven\neight\nnine\nten',
-        parameter_1='5',
+        input_1=download_file.outputs['file'],
+        parameter_1='5'
     )
     create_step_count_lines(
         input_1=get_lines.outputs['output_1']
@@ -98,12 +107,12 @@ if __name__ == "__main__":
 
     print('Compiling pipeline...')
 
-    pipeline_name = 'a_two_step_pipeline'
+    pipeline_name = 'a_three_step_pipeline'
     pipeline_archive = f'{pipeline_name}.tgz'
     timestamp = datetime.now().strftime("%m%d%H%M%S")
 
     # Compile
-    kfp.compiler.Compiler().compile(a_two_step_pipeline,
+    kfp.compiler.Compiler().compile(a_three_step_pipeline,
                                     pipeline_archive)
 
     pipeline_id = client.get_pipeline_id(pipeline_name)
