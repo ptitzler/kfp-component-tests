@@ -5,7 +5,7 @@ import kfp.dsl as dsl
 import requests
 import sys
 
-# url = 'https://raw.githubusercontent.com/ptitzler/kfp-component-tests/main/example-2/component.yaml'
+# url = 'https://raw.githubusercontent.com/ptitzler/kfp-component-tests/main/count-lines/component.yaml'
 # create_step_count_lines = comp.load_component_from_url(url)
 
 create_step_count_lines = comp.load_component_from_file('component.yaml')
@@ -101,7 +101,7 @@ if __name__ == "__main__":
                         cookies=auth_cookie)
 
     print('Creating run from pipeline')
-    run_name = f'component-2-pipeline-run-{datetime.now().strftime("%m%d%H%M%S")}'
+    run_name = f'count-lines-pipeline-run-{datetime.now().strftime("%m%d%H%M%S")}'
     print(f'Creating run {run_name} from pipeline...')
     # Compile, upload, and submit this pipeline for execution.
     run = client.create_run_from_pipeline_func(my_pipeline,

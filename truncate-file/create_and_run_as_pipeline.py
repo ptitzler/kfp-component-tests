@@ -5,21 +5,22 @@ import kfp.dsl as dsl
 import requests
 import sys
 
-# url = 'https://raw.githubusercontent.com/ptitzler/kfp-component-tests/main/example-0/component.yaml'
-# create_step_download_file = comp.load_component_from_url(url)
+# url = 'https://raw.githubusercontent.com/ptitzler/kfp-component-tests/main/truncate-file/component.yaml'
+# create_step_truncate_file = comp.load_component_from_url(url)
 
-create_step_download_file = comp.load_component_from_file('component.yaml')
+create_step_truncate_file = comp.load_component_from_file('component.yaml')
 
 
 # Define pipeline
 @dsl.pipeline(
-    name='File download pipeline',
-    description='Download file using HTTP/S GET request from public location'
+    name='File truncation pipeline',
+    description='Truncate file if it contains more than N lines'
 )
 def my_pipeline():
-    create_step_download_file(
-        # Input name "URL" is converted to pythonic parameter name "input_1"
-        url='https://raw.githubusercontent.com/ptitzler/kfp-component-tests/main/LICENSE'
+    create_step_truncate_file(
+        # Input name "Input 1" is converted to pythonic parameter name "input_1"
+        input_1='one\ntwo\nthree\nfour\nfive\nsix\nseven\neight\nnine\nten',
+        parameter_1=2,
     )
 
 
@@ -100,7 +101,7 @@ if __name__ == "__main__":
     client = kfp.Client(host=sys.argv[1],
                         cookies=auth_cookie)
 
-    run_name = f'component-0-pipeline-run-{datetime.now().strftime("%m%d%H%M%S")}'
+    run_name = f'truncate-file-pipeline-run-{datetime.now().strftime("%m%d%H%M%S")}'
     print(f'Creating run {run_name} from pipeline...')
     # Compile, upload, and submit this pipeline for execution.
     run = client.create_run_from_pipeline_func(my_pipeline,

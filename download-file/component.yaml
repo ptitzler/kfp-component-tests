@@ -9,16 +9,16 @@ outputs:
 
 implementation:
   container:
-    image: quay.io/ptitzler/kfp-ex-component-0:v000
+    image: quay.io/ptitzler/kfp-ex-download-file@sha256:c542d08ab177c2d75839233693517aa0f8b39e3c6ac31c46bf3567028579efe1
     # command is a list of strings (command-line arguments). 
     # The YAML language has two syntaxes for lists and you can use either of them. 
     # Here we use the "flow syntax" - comma-separated strings inside square brackets.
     command: [
       python3, 
       # Path of the program inside the container
-      /pipelines/component/src/example-0.py,
+      /pipelines/component/src/download-file.py,
       --file-url,
       {inputValue: URL},
       --output1-path, 
-      {outputPath: File},
+      {outputPath: File}
     ]

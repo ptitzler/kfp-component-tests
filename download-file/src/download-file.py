@@ -15,8 +15,7 @@ parser.add_argument('--output1-path',
                     help='Path of the local file where the Output 1 data should be written.')
 args = parser.parse_args()
 
-print('Input arguments:')
-print(args)
+print(f'Program arguments: {args}')
 
 # Creating the directory where the output file is created (the directory
 # may or may not exist).

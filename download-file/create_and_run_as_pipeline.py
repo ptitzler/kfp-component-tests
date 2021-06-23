@@ -5,26 +5,21 @@ import kfp.dsl as dsl
 import requests
 import sys
 
-create_step_load_file = comp.load_component_from_file('../download-file/component.yaml')
-create_step_get_lines = comp.load_component_from_file('../truncate-file/component.yaml')
-create_step_count_lines = comp.load_component_from_file('../count-lines/component.yaml')
+# url = 'https://raw.githubusercontent.com/ptitzler/kfp-component-tests/main/download-file/component.yaml'
+# create_step_download_file = comp.load_component_from_url(url)
+
+create_step_download_file = comp.load_component_from_file('component.yaml')
 
 
 # Define pipeline
 @dsl.pipeline(
-    name='Component examples example pipeline',
-    description='Runs download-file, truncate-file, and count-lines'
+    name='File download pipeline',
+    description='Download file using HTTP/S GET request from public location'
 )
-def a_three_step_pipeline():
-    download_file = create_step_load_file(
+def my_pipeline():
+    create_step_download_file(
+        # Input name "URL" is converted to pythonic parameter name "input_1"
         url='https://raw.githubusercontent.com/ptitzler/kfp-component-tests/main/LICENSE'
-    )
-    get_lines = create_step_get_lines(
-        input_1=download_file.outputs['file'],
-        parameter_1='5'
-    )
-    create_step_count_lines(
-        input_1=get_lines.outputs['output_1']
     )
 
 
@@ -105,46 +100,11 @@ if __name__ == "__main__":
     client = kfp.Client(host=sys.argv[1],
                         cookies=auth_cookie)
 
-    print('Compiling pipeline...')
-
-    pipeline_name = 'a_three_step_pipeline'
-    pipeline_archive = f'{pipeline_name}.tgz'
-    timestamp = datetime.now().strftime("%m%d%H%M%S")
-
-    # Compile
-    kfp.compiler.Compiler().compile(a_three_step_pipeline,
-                                    pipeline_archive)
-
-    pipeline_id = client.get_pipeline_id(pipeline_name)
-    if pipeline_id is None:
-        # Upload new pipeline. The call returns a unique pipeline id.
-        print(f'Uploading pipeline {pipeline_name} ...')
-        kfp_pipeline = \
-            client.upload_pipeline(pipeline_archive,
-                                   pipeline_name,
-                                   f'Created using {sys.argv[0]}')
-        pipeline_id = kfp_pipeline.id
-        version_id = None
-    else:
-        # Append timestamp to generate unique version name
-        pipeline_version_name = f'{pipeline_name}-{timestamp}'
-        # Upload a pipeline version. The call returns a unique version id.
-        print(f'Uploading pipeline version {pipeline_version_name} ...')
-        kfp_pipeline = \
-            client.upload_pipeline_version(pipeline_archive,
-                                           pipeline_version_name,
-                                           pipeline_id=pipeline_id)
-        version_id = kfp_pipeline.id
-
-    experiment_name = f'{pipeline_name}-experiment'
-    print(f'Creating expriment {experiment_name} in namespace {namespace} ...')
-    experiment = client.create_experiment(experiment_name,
-                                          namespace=namespace)
-
-    run_name = f'{pipeline_name}-{timestamp}'
-    print(f'Starting pipeline run {run_name} ...')
-    run = client.run_pipeline(experiment_id=experiment.id,
-                              job_name=run_name,
-                              pipeline_id=pipeline_id,
-                              version_id=version_id)
-    print(f'Pipeline run id: {run.id}')
+    run_name = f'download-file-pipeline-run-{datetime.now().strftime("%m%d%H%M%S")}'
+    print(f'Creating run {run_name} from pipeline...')
+    # Compile, upload, and submit this pipeline for execution.
+    run = client.create_run_from_pipeline_func(my_pipeline,
+                                               run_name=run_name,
+                                               namespace=namespace,
+                                               arguments={})
+    print(run)

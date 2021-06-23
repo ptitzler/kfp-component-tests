@@ -1,24 +1,28 @@
-name: Count lines
-description: Counts the number of lines in the input file
+name: Split file
+description: Splits the input file into two
 
 inputs:
-- {name: Input 1, type: String, description: 'Data for input 1'}
+- {name: Input 1, type: String, description: 'Input 1 data'}
 
 outputs:
-- {name: Output 1, type: String, description: 'Output 1 data.'}
+- {name: Output 1, type: String, description: 'Output 1 data'}
+- {name: Output 2, type: String, description: 'Output 2 data'}
+
 
 implementation:
   container:
-    image: quay.io/ptitzler/kfp-ex-component-2:v001
+    image: quay.io/ptitzler/kfp-ex-split-file@sha256:344773e83d4dc931a8acfdd580717c9be246cdb3d30c9b27a8d8db1ba8730472
     # command is a list of strings (command-line arguments). 
     # The YAML language has two syntaxes for lists and you can use either of them. 
     # Here we use the "flow syntax" - comma-separated strings inside square brackets.
     command: [
       python3, 
       # Path of the program inside the container
-      /pipelines/component/src/example-2.py,
+      /pipelines/component/src/split-file.py,
       --input1-path,
       {inputPath: Input 1},
       --output1-path, 
       {outputPath: Output 1},
+      --output2-path, 
+      {outputPath: Output 2},
     ]
