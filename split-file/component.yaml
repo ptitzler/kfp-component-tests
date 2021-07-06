@@ -2,7 +2,7 @@ name: Split file
 description: Splits the input file into two
 
 inputs:
-- {name: Input 1, type: String, description: 'Input 1 data'}
+- {name: Input 1, type: String, optional: false, description: 'Input 1 data'}
 
 outputs:
 - {name: Output 1, type: String, description: 'Output 1 data'}

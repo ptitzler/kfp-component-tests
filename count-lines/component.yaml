@@ -2,7 +2,7 @@ name: Count lines
 description: Counts the number of lines in the input file
 
 inputs:
-- {name: Input 1, type: String, description: 'Data for input 1'}
+- {name: Input 1, type: String, optional: false, description: 'Data for input 1'}
 
 outputs:
 - {name: Output 1, type: String, description: 'Output 1 data.'}
