@@ -2,7 +2,7 @@ name: Download File
 description: Downloads a file from a public HTTP/S URL using a GET request.
 
 inputs:
-- {name: URL, type: String, optional: false, description: 'File URL'}
+- {name: URL, type: String, description: 'File URL'}
 
 outputs:
 - {name: File, type: String, description: 'Output 1 data.'}
