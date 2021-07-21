@@ -1,7 +1,7 @@
 .PHONY: lint clean
 
 clean:
-	rm add_component.yaml
+	rm download_file_component.yaml
 
 lint:
 	pip install -r test-requirements.txt
