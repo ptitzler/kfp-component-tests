@@ -1,0 +1,58 @@
+name: Split
+description: Split a row-based text file into two files, alternating
+inputs:
+- {name: input, type: String}
+outputs:
+- {name: output_file_1, type: String}
+- {name: output_file_2, type: String}
+implementation:
+  container:
+    image: python:3.7
+    command:
+    - sh
+    - -ec
+    - |
+      program_path=$(mktemp)
+      printf "%s" "$0" > "$program_path"
+      python3 -u "$program_path" "$@"
+    - |
+      def _make_parent_dirs_and_return_path(file_path: str):
+          import os
+          os.makedirs(os.path.dirname(file_path), exist_ok=True)
+          return file_path
+
+      def split(input_file,
+                output_file_1,
+                output_file_2
+                ):
+          """
+          Split a row-based text file into two files, alternating
+          between rows.
+          """
+
+          with open(input_file, 'r') as file_input:
+              with open(output_file_1, 'w') as file_1_output:
+                  with open(output_file_2, 'w') as file_2_output:
+                      odd = True
+                      for line in file_input:
+                          if odd:
+                              file_1_output.write(line)
+                          else:
+                              file_2_output.write(line)
+                          odd = not odd
+
+      import argparse
+      _parser = argparse.ArgumentParser(prog='Split', description='Split a row-based text file into two files, alternating')
+      _parser.add_argument("--input", dest="input_file", type=str, required=True, default=argparse.SUPPRESS)
+      _parser.add_argument("--output-file-1", dest="output_file_1", type=_make_parent_dirs_and_return_path, required=True, default=argparse.SUPPRESS)
+      _parser.add_argument("--output-file-2", dest="output_file_2", type=_make_parent_dirs_and_return_path, required=True, default=argparse.SUPPRESS)
+      _parsed_args = vars(_parser.parse_args())
+
+      _outputs = split(**_parsed_args)
+    args:
+    - --input
+    - {inputPath: input}
+    - --output-file-1
+    - {outputPath: output_file_1}
+    - --output-file-2
+    - {outputPath: output_file_2}
