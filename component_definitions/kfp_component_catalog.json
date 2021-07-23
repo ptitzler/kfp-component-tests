@@ -1,0 +1,46 @@
+{
+  "categories": {
+    "kfp": {
+      "label": "Kubeflow Pipelines",
+      "image": "",
+      "description": "Components that are supported by Kubeflow Pipelines"
+    }
+  },
+  "components": {
+    "download-file": {
+      "name": "Download a file using HTTP GET",
+      "location": {
+         "url": "https://raw.githubusercontent.com/ptitzler/kfp-component-tests/main/component_definitions/download-file/component.yaml"
+      },
+      "category": "kfp"
+    },
+    "split-file": {
+      "name": "Split a file into two files",
+      "location": {
+        "url": "https://raw.githubusercontent.com/ptitzler/kfp-component-tests/main/component_definitions/split-file/component.yaml"
+      },
+      "category": "kfp"
+    },
+    "truncate-file": {
+      "name": "Truncate a text file after N lines",
+      "location": {
+        "url": "https://raw.githubusercontent.com/ptitzler/kfp-component-tests/main/component_definitions/truncate-file/component.yaml"      
+      },
+      "category": "kfp"
+    },
+    "count-lines": {
+      "name": "Count lines in text file",
+      "location": {
+        "url": "https://raw.githubusercontent.com/ptitzler/kfp-component-tests/main/component_definitions/count-lines/component.yaml"
+      },
+      "category": "kfp"
+    },
+    "humpty-dumpty": {
+      "name": "This is not ending well",
+      "location": {
+        "url": "https://raw.githubusercontent.com/ptitzler/kfp-component-tests/main/component_definitions/component.yaml"
+      },
+      "category": "kfp"
+    }   
+  }
+}
