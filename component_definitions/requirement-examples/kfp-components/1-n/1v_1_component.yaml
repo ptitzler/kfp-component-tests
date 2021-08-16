@@ -1,0 +1,24 @@
+name: one one
+description: one input value one output
+
+inputs:
+- {name: Input 1, type: String, optional: false, description: 'Data for input 1'}
+
+outputs:
+- {name: Output 1, type: String, description: 'Output 1 data'}
+
+implementation:
+  container:
+    image: quay.io/ptitzler/kfp-requirements-examples@sha256:57d36393ed1239a565c6a0151b592579ccb25da2ee4468f8703f70a68a2910b0
+    # command is a list of strings (command-line arguments). 
+    # The YAML language has two syntaxes for lists and you can use either of them. 
+    # Here we use the "flow syntax" - comma-separated strings inside square brackets.
+    command: [
+      python3, 
+      # Path of the program inside the container
+      /pipelines/component/src/1v_1.py,
+      --input1-value,
+      {inputValue: Input 1},
+      --output1-path, 
+      {outputPath: Output 1},
+    ]

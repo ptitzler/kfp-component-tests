@@ -1,0 +1,39 @@
+{
+  "categories": {
+    "kfp": {
+      "label": "Kubeflow Pipelines",
+      "image": "",
+      "description": "Components that are supported by Kubeflow Pipelines"
+    }
+  },
+  "components": {
+    "1p1": {
+      "name": "1 path input; 1 output",
+      "location": {
+         "filename": "1p_1_component.yaml"
+      },
+      "category": "kfp"
+    },
+    "1v1": {
+        "name": "1 value input; 1 output",
+        "location": {
+            "filename": "1v_1_component.yaml"
+        },
+        "category": "kfp"
+      },
+    "0_1": {
+        "name": "no input; 1 output",
+        "location": {
+            "filename": "0_1_component.yaml"
+        },
+        "category": "kfp"
+    },
+    "0_2": {
+      "name": "no input; 2 outputs",
+      "location": {
+          "filename": "0_2_component.yaml"
+      },
+      "category": "kfp"
+    }
+  }
+}
